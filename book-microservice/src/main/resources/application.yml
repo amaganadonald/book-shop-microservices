@@ -1,0 +1,44 @@
+spring:
+  application.name: BOOK-SERVICE
+
+  data:
+    mongodb:
+      database: book-service
+      host: localhost
+      port: 27017
+     
+  jpa:
+    hibernate:
+      ddl-auto: update
+      
+    show-sql: true
+  cloud:
+    discovery:
+      enabled: false
+    config:
+      enabled: false
+      
+server:
+  port: 9893
+  
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  health:
+    circuitbreakers:
+      enabled: true
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        sliding-window-size: 10
+        minimumNumberOfCalls: 5
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+topic:
+  name: addBook

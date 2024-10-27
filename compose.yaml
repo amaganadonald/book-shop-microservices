@@ -1,0 +1,136 @@
+services:
+  eureka-server:
+    container_name: 'eureka-server'
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+
+    ports:
+      - "8761:8761"
+    networks:
+      - cloud-network
+  gateway:
+    container_name: 'REACTIVE-GATEWAY'
+    build:
+      context: ./reactive-api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - '9898:9898'
+    networks:
+      - cloud-network
+    depends_on: 
+      - eureka-server
+      - config-server
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      #SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+  config-server:
+    container_name: config-server
+    build:
+      context: config-service
+      dockerfile: Dockerfile
+    ports:
+      - '9899:9899'
+    networks:
+      - cloud-network
+    depends_on:
+      - eureka-server
+    environment:
+      SPRING_PROFILES_ACTIVE: git
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: https://github.com/amaganadonald/book-configuration.git
+
+  postgres:
+    image: 'postgres'
+    container_name: 'postgres'
+    environment:
+      - 'POSTGRES_DB=settings-service'
+      - 'POSTGRES_PASSWORD=donald'
+      - 'POSTGRES_USER=postgres'
+    ports:
+      - '5432:5432'
+    networks:
+      - cloud-network
+    volumes:
+      - ./data:/var/lib/postgresql/data
+      - postgresql_data:/var/lib/postgresql/data
+
+  postgres-library:
+    image: 'postgres'
+    container_name: 'postgres-library'
+    environment:
+      - 'POSTGRES_DB=library-service'
+      - 'POSTGRES_PASSWORD=evrard'
+      - 'POSTGRES_USER=postgres'
+    ports:
+      - '5433:5432'
+    networks:
+      - cloud-network
+    volumes:
+      - postgres_data1:/var/lib/postgresql/data
+
+  pgadmin4:
+    image: 'elestio/pgadmin'
+    container_name: 'pgadmin'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: donald9do@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: donald
+      PGADMIN_LISTEN_PORT: 4000
+    ports:
+      - '4000:4000'
+    networks:
+      - cloud-network
+    volumes:
+      - ./servers.json:/pgadmin4/servers.json
+    depends_on:
+      - postgres
+      - postgres-library
+  settings-s:
+    container_name: 'SETTINGS-SERVICE'
+    build:
+      context: ./settings-service
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/settings-service
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: donald
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: false
+      SPRING_CONFIG_URI: http://localhost:9899
+    ports:
+      - "9891:9891"  # Expose le port du microservice A (8080) sur le port 8081 de l'hôte
+    networks:
+      - cloud-network
+    depends_on:
+      - postgres
+      - eureka-server
+      - config-server
+    # library service
+  library-s:
+    container_name: 'LIBRARY-SERVICE'
+    build:
+      context: ./library-microservice
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE2_URL: jdbc:postgresql://postgres-library:5432/library-service
+      SPRING_DATASOURCE2_USERNAME: postgres
+      SPRING_DATASOURCE2_PASSWORD: evrard
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: false
+      SPRING_CONFIG_URI: http://localhost:9899
+    ports:
+      - "9892:9892"
+    networks:
+      - cloud-network
+    depends_on:
+      - postgres-library
+      - eureka-server
+      - config-server
+volumes:
+  postgresql:
+  postgresql_data:
+  postgres_data1:
+
+networks:
+  cloud-network:
+    driver: bridge

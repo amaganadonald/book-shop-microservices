@@ -1,0 +1,39 @@
+server:
+  port: 9822
+  
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/onlineLibrary
+    username: postgres
+    password: donald
+  flyway:
+    url: jdbc:postgresql://localhost:5432/onlineLibrary
+    user: postgres
+    password: donald
+
+topic:
+   name: onlineBook  
+#  kafka:
+#    producer:
+#     bootstrap-servers:
+#    - localhost:9092
+#      - localhost:9093
+#      - localhost:9094
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#    client-id: producer-bbok
+#    consumer:
+#      bootstrap-servers:
+#      - localhost:9092
+#      - localhost:9093
+#      - localhost:9094
+#      group-id: cons-1
+#      auto-offset-reset: earliest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+#    properties:
+#      spring:
+#        json:
+#          trusted:
+#            packages: com.luxprojects.onlineBook.dto
+      

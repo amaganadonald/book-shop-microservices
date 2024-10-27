@@ -1,0 +1,11 @@
+{
+  "namespace": "com.luxprojects.onlineBook.dto" ,
+  "type": "record",
+  "name": "Address",
+  "field": [
+    {
+      "name": "name",
+      "type": "string"
+    }
+  ]
+}

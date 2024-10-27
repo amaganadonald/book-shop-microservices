@@ -1,0 +1,9 @@
+server:
+  port: 9820
+  
+spring:
+  datasource:
+    url: jdbc:h2:mem:onlineBooj
+    username: sa
+    password: donald
+    driver-class-name: org.h2.Driver

@@ -1,0 +1,11 @@
+spring:
+  application.name: LIBRARY-SERVICE
+  cloud:
+    config:
+      uri: ${SPRING_CONFIG_URI}
+  config:
+    import: optional:configserver:${SPRING_CONFIG_URI}
+
+server:
+  port: 9892
+

@@ -1,0 +1,9 @@
+spring:
+  application.name: READER-SERVICE
+  
+logging:
+  file:
+    name: readerlog.log
+
+server:
+  port: 9894

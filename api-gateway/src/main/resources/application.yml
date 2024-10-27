@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    discovery:
+      enabled: true
+    gateway:
+      routes:
+        - id: r1
+          uri: lb://SETTINGS-SERVICE
+          predicates:
+            -Path: /api/v1/address/**
+        - id: r2
+          uri: lb://LIBRARY-SERVICE
+          predicates:
+            -Path: /api/v1/library/**
+
+    config:
+      enabled: false
+
+server:
+  port: 9890
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
