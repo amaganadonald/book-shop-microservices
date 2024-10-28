@@ -5,11 +5,13 @@ spring:
   cloud:
     discovery:
       enabled: true
+    config:
+      uri: ${CONFIG_SERVICE_URI}
+
+  config:
+    import: optional:configserver:${CONFIG_SERVICE_URI}
+
 server:
   port: 9898
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://eureka-server:8761/eureka/
 

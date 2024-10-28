@@ -1,10 +1,14 @@
 spring:
   application.name: LIBRARY-SERVICE
+  config:
+    import: optional:configserver:${CONFIG_SERVICE_URI}
   cloud:
     config:
-      uri: ${SPRING_CONFIG_URI}
-  config:
-    import: optional:configserver:${SPRING_CONFIG_URI}
+      uri: ${CONFIG_SERVICE_URI}
+  datasource:
+    url: ${SPRING_DATASOURCE2_URL}
+    username: ${SPRING_DATASOURCE2_USERNAME}
+    password: ${SPRING_DATASOURCE2_PASSWORD}
 
 server:
   port: 9892

@@ -1,4 +1,4 @@
-FROM openjdk:23-jdk-oracle
-COPY target/config-service-0.0.1-SNAPSHOT.jar /config-service.jar
-EXPOSE 9890
-CMD [ "java", "-jar", "config-service.jar", "--spring.profiles.active=prod"]
+FROM openjdk:21-oracle
+VOLUME /tmp
+COPY target/*.jar /config-service.jar
+ENTRYPOINT [ "java", "-jar", "config-service.jar", "--spring.profiles.active=prod" ]
